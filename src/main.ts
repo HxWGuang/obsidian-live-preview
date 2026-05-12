@@ -1,12 +1,11 @@
 import { Plugin, WorkspaceLeaf, TFile, FileSystemAdapter, Notice } from "obsidian";
 import { LiveServer } from "./LiveServer";
-import { PreviewView, VIEW_TYPE_LIVE_PREVIEW } from "./PreviewView";
+import { PreviewView, VIEW_TYPE_LIVE_PREVIEW, PreviewController } from "./PreviewView";
 import { DEFAULT_SETTINGS, SettingTab, LivePreviewSettings } from "./Settings";
 
-const HTML_EXTENSIONS = new Set(["html", "htm"]);
 const WATCH_EXTENSIONS = new Set(["html", "htm", "css", "js"]);
 
-export default class LivePreviewPlugin extends Plugin {
+export default class LivePreviewPlugin extends Plugin implements PreviewController {
   settings!: LivePreviewSettings;
   liveServer!: LiveServer;
   private currentFile: TFile | null = null;
@@ -21,7 +20,7 @@ export default class LivePreviewPlugin extends Plugin {
 
     this.registerView(
       VIEW_TYPE_LIVE_PREVIEW,
-      (leaf) => new PreviewView(leaf)
+      (leaf) => new PreviewView(leaf, this)
     );
 
     this.addCommand({
@@ -29,8 +28,8 @@ export default class LivePreviewPlugin extends Plugin {
       name: "Start Live Preview",
       checkCallback: (checking) => {
         const file = this.app.workspace.getActiveFile();
-        if (file && HTML_EXTENSIONS.has(file.extension)) {
-          if (!checking) this.startPreview(file);
+        if (file && (file.extension === "html" || file.extension === "htm")) {
+          if (!checking) this.openPreviewForFile(file);
           return true;
         }
         return false;
@@ -72,32 +71,10 @@ export default class LivePreviewPlugin extends Plugin {
       })
     );
 
-    this.registerEvent(
-      this.app.workspace.on("file-open", (file) => {
-        if (
-          file &&
-          HTML_EXTENSIONS.has(file.extension) &&
-          this.settings.autoOpenOnHtml
-        ) {
-          this.startPreview(file);
-        }
-      })
-    );
-
     this.addSettingTab(new SettingTab(this.app, this));
   }
 
-  private onFileChanged(): void {
-    if (!this.liveServer.isRunning) return;
-    if (this.debounceTimer !== null) {
-      window.clearTimeout(this.debounceTimer);
-    }
-    this.debounceTimer = window.setTimeout(() => {
-      this.liveServer.sendReload();
-    }, this.settings.debounceDelay);
-  }
-
-  private async startPreview(file: TFile): Promise<void> {
+  async onFileOpen(file: TFile, view: PreviewView): Promise<void> {
     const adapter = this.app.vault.adapter;
     if (!(adapter instanceof FileSystemAdapter)) return;
 
@@ -118,17 +95,27 @@ export default class LivePreviewPlugin extends Plugin {
     }
 
     this.currentFile = file;
+    view.loadUrl(this.liveServer.getUrl(fileAbsPath));
+  }
 
+  private async openPreviewForFile(file: TFile): Promise<void> {
     const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_LIVE_PREVIEW);
     let leaf: WorkspaceLeaf | null = leaves[0] || null;
     if (!leaf) {
       leaf = this.app.workspace.getRightLeaf(false) ?? this.app.workspace.getLeaf("split");
-      await leaf.setViewState({ type: VIEW_TYPE_LIVE_PREVIEW, active: true });
     }
+    await leaf.setViewState({ type: VIEW_TYPE_LIVE_PREVIEW, active: true });
     this.app.workspace.revealLeaf(leaf);
+  }
 
-    const view = leaf.view as PreviewView;
-    view.loadUrl(this.liveServer.getUrl(fileAbsPath));
+  private onFileChanged(): void {
+    if (!this.liveServer.isRunning) return;
+    if (this.debounceTimer !== null) {
+      window.clearTimeout(this.debounceTimer);
+    }
+    this.debounceTimer = window.setTimeout(() => {
+      this.liveServer.sendReload();
+    }, this.settings.debounceDelay);
   }
 
   private async stopPreview(): Promise<void> {

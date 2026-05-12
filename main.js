@@ -3978,19 +3978,27 @@ var LiveServer = class {
 // src/PreviewView.ts
 var import_obsidian = require("obsidian");
 var VIEW_TYPE_LIVE_PREVIEW = "live-preview-view";
-var PreviewView = class extends import_obsidian.ItemView {
-  constructor(leaf) {
+var PreviewView = class extends import_obsidian.FileView {
+  constructor(leaf, controller) {
     super(leaf);
     this.iframe = null;
+    this.controller = controller;
   }
   getViewType() {
     return VIEW_TYPE_LIVE_PREVIEW;
   }
   getDisplayText() {
-    return "Live Preview";
+    var _a, _b;
+    return (_b = (_a = this.file) == null ? void 0 : _a.name) != null ? _b : "Live Preview";
   }
   getIcon() {
     return "globe";
+  }
+  canAcceptExtension(extension2) {
+    return extension2 === "html" || extension2 === "htm";
+  }
+  async onLoadFile(file) {
+    await this.controller.onFileOpen(file, this);
   }
   async onOpen() {
     const container = this.contentEl;
@@ -4022,8 +4030,7 @@ var PreviewView = class extends import_obsidian.ItemView {
 var import_obsidian2 = require("obsidian");
 var DEFAULT_SETTINGS = {
   port: 5500,
-  debounceDelay: 300,
-  autoOpenOnHtml: true
+  debounceDelay: 300
 };
 var SettingTab = class extends import_obsidian2.PluginSettingTab {
   constructor(app, plugin) {
@@ -4052,17 +4059,10 @@ var SettingTab = class extends import_obsidian2.PluginSettingTab {
         }
       })
     );
-    new import_obsidian2.Setting(containerEl).setName("Auto-open on HTML files").setDesc("Automatically start preview when opening an .html or .htm file").addToggle(
-      (toggle) => toggle.setValue(this.plugin.settings.autoOpenOnHtml).onChange(async (value) => {
-        this.plugin.settings.autoOpenOnHtml = value;
-        await this.plugin.saveSettings();
-      })
-    );
   }
 };
 
 // src/main.ts
-var HTML_EXTENSIONS = /* @__PURE__ */ new Set(["html", "htm"]);
 var WATCH_EXTENSIONS = /* @__PURE__ */ new Set(["html", "htm", "css", "js"]);
 var LivePreviewPlugin = class extends import_obsidian3.Plugin {
   constructor() {
@@ -4076,16 +4076,16 @@ var LivePreviewPlugin = class extends import_obsidian3.Plugin {
     this.registerExtensions(["html", "htm"], VIEW_TYPE_LIVE_PREVIEW);
     this.registerView(
       VIEW_TYPE_LIVE_PREVIEW,
-      (leaf) => new PreviewView(leaf)
+      (leaf) => new PreviewView(leaf, this)
     );
     this.addCommand({
       id: "start-live-preview",
       name: "Start Live Preview",
       checkCallback: (checking) => {
         const file = this.app.workspace.getActiveFile();
-        if (file && HTML_EXTENSIONS.has(file.extension)) {
+        if (file && (file.extension === "html" || file.extension === "htm")) {
           if (!checking)
-            this.startPreview(file);
+            this.openPreviewForFile(file);
           return true;
         }
         return false;
@@ -4123,27 +4123,10 @@ var LivePreviewPlugin = class extends import_obsidian3.Plugin {
         }
       })
     );
-    this.registerEvent(
-      this.app.workspace.on("file-open", (file) => {
-        if (file && HTML_EXTENSIONS.has(file.extension) && this.settings.autoOpenOnHtml) {
-          this.startPreview(file);
-        }
-      })
-    );
     this.addSettingTab(new SettingTab(this.app, this));
   }
-  onFileChanged() {
-    if (!this.liveServer.isRunning)
-      return;
-    if (this.debounceTimer !== null) {
-      window.clearTimeout(this.debounceTimer);
-    }
-    this.debounceTimer = window.setTimeout(() => {
-      this.liveServer.sendReload();
-    }, this.settings.debounceDelay);
-  }
-  async startPreview(file) {
-    var _a, _b;
+  async onFileOpen(file, view) {
+    var _a;
     const adapter = this.app.vault.adapter;
     if (!(adapter instanceof import_obsidian3.FileSystemAdapter))
       return;
@@ -4162,15 +4145,27 @@ var LivePreviewPlugin = class extends import_obsidian3.Plugin {
       }
     }
     this.currentFile = file;
+    view.loadUrl(this.liveServer.getUrl(fileAbsPath));
+  }
+  async openPreviewForFile(file) {
+    var _a;
     const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_LIVE_PREVIEW);
     let leaf = leaves[0] || null;
     if (!leaf) {
-      leaf = (_b = this.app.workspace.getRightLeaf(false)) != null ? _b : this.app.workspace.getLeaf("split");
-      await leaf.setViewState({ type: VIEW_TYPE_LIVE_PREVIEW, active: true });
+      leaf = (_a = this.app.workspace.getRightLeaf(false)) != null ? _a : this.app.workspace.getLeaf("split");
     }
+    await leaf.setViewState({ type: VIEW_TYPE_LIVE_PREVIEW, active: true });
     this.app.workspace.revealLeaf(leaf);
-    const view = leaf.view;
-    view.loadUrl(this.liveServer.getUrl(fileAbsPath));
+  }
+  onFileChanged() {
+    if (!this.liveServer.isRunning)
+      return;
+    if (this.debounceTimer !== null) {
+      window.clearTimeout(this.debounceTimer);
+    }
+    this.debounceTimer = window.setTimeout(() => {
+      this.liveServer.sendReload();
+    }, this.settings.debounceDelay);
   }
   async stopPreview() {
     await this.liveServer.stop();

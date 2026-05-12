@@ -1,12 +1,18 @@
-import { ItemView, WorkspaceLeaf } from "obsidian";
+import { FileView, WorkspaceLeaf, TFile } from "obsidian";
 
 export const VIEW_TYPE_LIVE_PREVIEW = "live-preview-view";
 
-export class PreviewView extends ItemView {
-  private iframe: HTMLIFrameElement | null = null;
+export interface PreviewController {
+  onFileOpen(file: TFile, view: PreviewView): Promise<void>;
+}
 
-  constructor(leaf: WorkspaceLeaf) {
+export class PreviewView extends FileView {
+  private iframe: HTMLIFrameElement | null = null;
+  private controller: PreviewController;
+
+  constructor(leaf: WorkspaceLeaf, controller: PreviewController) {
     super(leaf);
+    this.controller = controller;
   }
 
   getViewType(): string {
@@ -14,11 +20,19 @@ export class PreviewView extends ItemView {
   }
 
   getDisplayText(): string {
-    return "Live Preview";
+    return this.file?.name ?? "Live Preview";
   }
 
   getIcon(): string {
     return "globe";
+  }
+
+  canAcceptExtension(extension: string): boolean {
+    return extension === "html" || extension === "htm";
+  }
+
+  async onLoadFile(file: TFile): Promise<void> {
+    await this.controller.onFileOpen(file, this);
   }
 
   async onOpen(): Promise<void> {

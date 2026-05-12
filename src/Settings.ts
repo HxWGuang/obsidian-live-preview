@@ -4,13 +4,11 @@ import type LivePreviewPlugin from "./main";
 export interface LivePreviewSettings {
   port: number;
   debounceDelay: number;
-  autoOpenOnHtml: boolean;
 }
 
 export const DEFAULT_SETTINGS: LivePreviewSettings = {
   port: 5500,
   debounceDelay: 300,
-  autoOpenOnHtml: true,
 };
 
 export class SettingTab extends PluginSettingTab {
@@ -57,16 +55,5 @@ export class SettingTab extends PluginSettingTab {
           })
       );
 
-    new Setting(containerEl)
-      .setName("Auto-open on HTML files")
-      .setDesc("Automatically start preview when opening an .html or .htm file")
-      .addToggle((toggle) =>
-        toggle
-          .setValue(this.plugin.settings.autoOpenOnHtml)
-          .onChange(async (value) => {
-            this.plugin.settings.autoOpenOnHtml = value;
-            await this.plugin.saveSettings();
-          })
-      );
   }
 }
