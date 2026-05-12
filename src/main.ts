@@ -17,6 +17,8 @@ export default class LivePreviewPlugin extends Plugin {
 
     this.liveServer = new LiveServer(this.settings.port);
 
+    this.registerExtensions(["html", "htm"], VIEW_TYPE_LIVE_PREVIEW);
+
     this.registerView(
       VIEW_TYPE_LIVE_PREVIEW,
       (leaf) => new PreviewView(leaf)

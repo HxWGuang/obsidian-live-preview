@@ -4073,6 +4073,7 @@ var LivePreviewPlugin = class extends import_obsidian3.Plugin {
   async onload() {
     await this.loadSettings();
     this.liveServer = new LiveServer(this.settings.port);
+    this.registerExtensions(["html", "htm"], VIEW_TYPE_LIVE_PREVIEW);
     this.registerView(
       VIEW_TYPE_LIVE_PREVIEW,
       (leaf) => new PreviewView(leaf)
