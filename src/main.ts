@@ -111,14 +111,9 @@ export default class LivePreviewPlugin extends Plugin {
     this.currentFile = file;
 
     const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_LIVE_PREVIEW);
-    let leaf: WorkspaceLeaf;
-    if (leaves.length > 0) {
-      leaf = leaves[0];
-    } else {
-      leaf = this.app.workspace.getRightLeaf(false);
-      if (!leaf) {
-        leaf = this.app.workspace.getLeaf("split");
-      }
+    let leaf: WorkspaceLeaf | null = leaves[0] || null;
+    if (!leaf) {
+      leaf = this.app.workspace.getRightLeaf(false) ?? this.app.workspace.getLeaf("split");
       await leaf.setViewState({ type: VIEW_TYPE_LIVE_PREVIEW, active: true });
     }
     this.app.workspace.revealLeaf(leaf);
