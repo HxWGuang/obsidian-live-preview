@@ -1,0 +1,19 @@
+{
+  "name": "obsidian-live-preview",
+  "version": "1.0.0",
+  "description": "Live HTML preview with local HTTP server and auto-reload for Obsidian",
+  "main": "main.js",
+  "scripts": {
+    "dev": "node esbuild.config.mjs",
+    "build": "node esbuild.config.mjs production"
+  },
+  "dependencies": {
+    "ws": "^8.16.0"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.5.10",
+    "obsidian": "latest",
+    "typescript": "^5.3.0",
+    "esbuild": "^0.19.0"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "id": "obsidian-live-preview",
+  "name": "Live Preview",
+  "version": "1.0.0",
+  "minAppVersion": "0.15.0",
+  "description": "Live HTML preview with local HTTP server and auto-reload, like VSCode Live Preview",
+  "author": "HxGuang",
+  "authorUrl": "",
+  "isDesktopOnly": true
+}
