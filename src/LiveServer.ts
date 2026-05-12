@@ -61,29 +61,35 @@ export class LiveServer {
       return;
     }
     this.rootDir = path.resolve(rootDir);
-
-    this.server = http.createServer((req, res) => {
-      this.handleRequest(req, res);
-    });
-
-    this.wss = new WebSocketServer({ noServer: true });
-
-    this.server.on("upgrade", (req, socket, head) => {
-      if (req.url === "/live-reload") {
-        this.wss!.handleUpgrade(req, socket, head, (ws) => {
-          this.clients.add(ws);
-          ws.on("close", () => this.clients.delete(ws));
-        });
-      } else {
-        socket.destroy();
-      }
-    });
+    this.server = this.createHttpServer();
 
     await new Promise<void>((resolve, reject) => {
       this.listen(this.port, resolve, reject);
     });
 
     this.isRunning = true;
+  }
+
+  private createHttpServer(): http.Server {
+    const server = http.createServer((req, res) => {
+      this.handleRequest(req, res);
+    });
+
+    this.wss = new WebSocketServer({ noServer: true });
+
+    server.on("upgrade", (req, socket, head) => {
+      if (req.url === "/live-reload") {
+        this.wss!.handleUpgrade(req, socket, head, (ws) => {
+          this.clients.add(ws);
+          ws.on("close", () => this.clients.delete(ws));
+          ws.on("error", () => this.clients.delete(ws));
+        });
+      } else {
+        socket.destroy();
+      }
+    });
+
+    return server;
   }
 
   private listen(p: number, resolve: () => void, reject: (err: Error) => void): void {
@@ -94,17 +100,7 @@ export class LiveServer {
     this.server!.once("error", (err: NodeJS.ErrnoException) => {
       if (err.code === "EADDRINUSE") {
         this.server!.close();
-        this.server = http.createServer((req, res) => this.handleRequest(req, res));
-        this.server.on("upgrade", (_req, socket, head) => {
-          if (_req.url === "/live-reload") {
-            this.wss!.handleUpgrade(_req, socket, head, (ws) => {
-              this.clients.add(ws);
-              ws.on("close", () => this.clients.delete(ws));
-            });
-          } else {
-            socket.destroy();
-          }
-        });
+        this.server = this.createHttpServer();
         this.listen(p + 1, resolve, reject);
       } else {
         reject(err);
@@ -155,9 +151,17 @@ export class LiveServer {
       return;
     }
 
-    const urlPath = decodeURIComponent(req.url || "/");
-    const normalized = path.normalize(urlPath);
-    const safePath = path.join(this.rootDir, normalized);
+    let urlPath: string;
+    try {
+      urlPath = decodeURIComponent(req.url || "/");
+    } catch {
+      res.writeHead(400);
+      res.end();
+      return;
+    }
+
+    const relative = path.posix.normalize(urlPath).replace(/^\//, "");
+    const safePath = path.join(this.rootDir, relative);
 
     // Block directory traversal
     if (!safePath.startsWith(this.rootDir + path.sep) && safePath !== this.rootDir) {
