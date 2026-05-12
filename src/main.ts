@@ -1,4 +1,4 @@
-import { Plugin, WorkspaceLeaf, TFile, FileSystemAdapter } from "obsidian";
+import { Plugin, WorkspaceLeaf, TFile, FileSystemAdapter, Notice } from "obsidian";
 import { LiveServer } from "./LiveServer";
 import { PreviewView, VIEW_TYPE_LIVE_PREVIEW } from "./PreviewView";
 import { DEFAULT_SETTINGS, SettingTab, LivePreviewSettings } from "./Settings";
@@ -95,11 +95,17 @@ export default class LivePreviewPlugin extends Plugin {
     const vaultRoot = adapter.getBasePath();
     const fileDir = file.parent?.path || "";
     const rootDir = fileDir ? `${vaultRoot}/${fileDir}` : vaultRoot;
+    const fileAbsPath = `${vaultRoot}/${file.path}`;
 
     if (this.liveServer.isRunning) {
       this.liveServer.setRootDir(rootDir);
     } else {
-      await this.liveServer.start(rootDir);
+      try {
+        await this.liveServer.start(rootDir);
+      } catch (err) {
+        new Notice(`Live Preview: Failed to start server — ${err}`);
+        return;
+      }
     }
 
     this.currentFile = file;
@@ -109,13 +115,16 @@ export default class LivePreviewPlugin extends Plugin {
     if (leaves.length > 0) {
       leaf = leaves[0];
     } else {
-      leaf = this.app.workspace.getRightLeaf(false)!;
+      leaf = this.app.workspace.getRightLeaf(false);
+      if (!leaf) {
+        leaf = this.app.workspace.getLeaf("split");
+      }
       await leaf.setViewState({ type: VIEW_TYPE_LIVE_PREVIEW, active: true });
     }
     this.app.workspace.revealLeaf(leaf);
 
     const view = leaf.view as PreviewView;
-    view.loadUrl(this.liveServer.getUrl(file.path));
+    view.loadUrl(this.liveServer.getUrl(fileAbsPath));
   }
 
   private async stopPreview(): Promise<void> {
