@@ -35,11 +35,9 @@ const MIME_MAP: Record<string, string> = {
 
 function injectReload(html: string, port: number): string {
   const script = getReloadScript(port);
-  if (html.includes("</body>")) {
-    return html.replace("</body>", script + "</body>");
-  }
-  if (html.includes("</BODY>")) {
-    return html.replace("</BODY>", script + "</BODY>");
+  const bodyClose = /<\/body>/i;
+  if (bodyClose.test(html)) {
+    return html.replace(bodyClose, script + "</body>");
   }
   return html + script;
 }
