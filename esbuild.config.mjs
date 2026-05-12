@@ -1,5 +1,5 @@
-const esbuild = require("esbuild");
-const process = require("process");
+import esbuild from "esbuild";
+import process from "process";
 
 const prod = process.argv[2] === "production";
 
