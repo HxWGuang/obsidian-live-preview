@@ -22,7 +22,7 @@ export class PreviewView extends ItemView {
   }
 
   async onOpen(): Promise<void> {
-    const container = this.containerEl.children[1];
+    const container = this.contentEl;
     container.empty();
     container.style.padding = "0";
     container.style.overflow = "hidden";
@@ -42,6 +42,10 @@ export class PreviewView extends ItemView {
   }
 
   async onClose(): Promise<void> {
-    this.iframe = null;
+    if (this.iframe) {
+      this.iframe.src = "about:blank";
+      this.iframe.remove();
+      this.iframe = null;
+    }
   }
 }
