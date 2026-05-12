@@ -98,7 +98,8 @@ export class LiveServer {
       resolve();
     });
     this.server!.once("error", (err: NodeJS.ErrnoException) => {
-      if (err.code === "EADDRINUSE") {
+      if (err.code === "EADDRINUSE" && p < 65535) {
+        this.wss?.close();
         this.server!.close();
         this.server = this.createHttpServer();
         this.listen(p + 1, resolve, reject);

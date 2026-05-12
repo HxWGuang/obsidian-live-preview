@@ -3883,7 +3883,9 @@ var LiveServer = class {
       resolve2();
     });
     this.server.once("error", (err) => {
-      if (err.code === "EADDRINUSE") {
+      var _a;
+      if (err.code === "EADDRINUSE" && p < 65535) {
+        (_a = this.wss) == null ? void 0 : _a.close();
         this.server.close();
         this.server = this.createHttpServer();
         this.listen(p + 1, resolve2, reject);
@@ -4099,7 +4101,14 @@ var LivePreviewPlugin = class extends import_obsidian3.Plugin {
       checkCallback: (checking) => {
         if (this.liveServer.isRunning && this.currentFile) {
           if (!checking) {
-            window.open(this.liveServer.getUrl(this.currentFile.path));
+            const adapter = this.app.vault.adapter;
+            if (adapter instanceof import_obsidian3.FileSystemAdapter) {
+              window.open(
+                this.liveServer.getUrl(
+                  `${adapter.getBasePath()}/${this.currentFile.path}`
+                )
+              );
+            }
           }
           return true;
         }

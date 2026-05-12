@@ -47,7 +47,14 @@ export default class LivePreviewPlugin extends Plugin {
       checkCallback: (checking) => {
         if (this.liveServer.isRunning && this.currentFile) {
           if (!checking) {
-            window.open(this.liveServer.getUrl(this.currentFile.path));
+            const adapter = this.app.vault.adapter;
+            if (adapter instanceof FileSystemAdapter) {
+              window.open(
+                this.liveServer.getUrl(
+                  `${adapter.getBasePath()}/${this.currentFile.path}`
+                )
+              );
+            }
           }
           return true;
         }
