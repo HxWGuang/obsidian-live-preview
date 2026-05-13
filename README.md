@@ -15,18 +15,18 @@ A live HTML preview plugin for [Obsidian](https://obsidian.md), inspired by VSCo
 
 ## Installation
 
-### From Obsidian Community Plugins
+### Obsidian Community Plugins
 
-*Coming soon — pending submission to the Obsidian plugin directory.*
+Search "Live Preview" in **Settings → Community plugins → Browse**, then install and enable.
 
-### Manual Installation
+### Manual
 
 1. Download the latest release from [Releases](https://github.com/HxWGuang/obsidian-live-preview/releases).
 2. Extract the files into `<vault>/.obsidian/plugins/obsidian-live-preview/`.
 3. Reload Obsidian (`Cmd/Ctrl + R`).
 4. Go to **Settings → Community plugins → Installed plugins** and enable **Live Preview**.
 
-### From Source (BRAT)
+### BRAT
 
 1. Install the [BRAT](https://github.com/TfTHacker/obsidian42-brat) plugin.
 2. In BRAT settings, add this repository: `HxWGuang/obsidian-live-preview`.
@@ -84,7 +84,3 @@ cp main.js manifest.json styles.css /path/to/vault/.obsidian/plugins/obsidian-li
 ## License
 
 [MIT](LICENSE)
-
-## Author
-
-**HxGuang** — [GitHub](https://github.com/HxWGuang)

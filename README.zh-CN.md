@@ -15,9 +15,9 @@
 
 ## 安装
 
-### 通过 Obsidian 社区插件市场
+### Obsidian 社区插件市场
 
-*即将上线 — 等待提交至 Obsidian 插件目录。*
+在 **设置 → 第三方插件 → 浏览** 中搜索 "Live Preview"，安装并启用。
 
 ### 手动安装
 
@@ -84,7 +84,3 @@ cp main.js manifest.json styles.css /path/to/vault/.obsidian/plugins/obsidian-li
 ## 许可证
 
 [MIT](LICENSE)
-
-## 作者
-
-**HxGuang** — [GitHub](https://github.com/HxWGuang)
