@@ -38,14 +38,11 @@ export class PreviewView extends FileView {
   async onOpen(): Promise<void> {
     const container = this.contentEl;
     container.empty();
-    container.style.padding = "0";
-    container.style.overflow = "hidden";
+    container.addClass("live-preview-container");
 
-    this.iframe = document.createElement("iframe");
+    this.iframe = activeDocument.createElement("iframe");
     this.iframe.setAttribute("sandbox", "allow-scripts allow-same-origin");
-    this.iframe.style.width = "100%";
-    this.iframe.style.height = "100%";
-    this.iframe.style.border = "none";
+    this.iframe.addClass("live-preview-iframe");
     container.appendChild(this.iframe);
   }
 

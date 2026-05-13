@@ -24,12 +24,12 @@ export default class LivePreviewPlugin extends Plugin implements PreviewControll
     );
 
     this.addCommand({
-      id: "start-live-preview",
-      name: "Start Live Preview",
+      id: "start",
+      name: "Start preview",
       checkCallback: (checking) => {
         const file = this.app.workspace.getActiveFile();
         if (file && (file.extension === "html" || file.extension === "htm")) {
-          if (!checking) this.openPreviewForFile(file);
+          if (!checking) void this.openPreviewForFile(file);
           return true;
         }
         return false;
@@ -37,14 +37,14 @@ export default class LivePreviewPlugin extends Plugin implements PreviewControll
     });
 
     this.addCommand({
-      id: "stop-live-preview",
-      name: "Stop Live Preview",
+      id: "stop",
+      name: "Stop preview",
       callback: () => this.stopPreview(),
     });
 
     this.addCommand({
       id: "open-in-browser",
-      name: "Open Preview in Browser",
+      name: "Open preview in browser",
       checkCallback: (checking) => {
         if (this.liveServer.isRunning && this.currentFile) {
           if (!checking) {
@@ -89,7 +89,7 @@ export default class LivePreviewPlugin extends Plugin implements PreviewControll
       try {
         await this.liveServer.start(rootDir);
       } catch (err) {
-        new Notice(`Live Preview: Failed to start server — ${err}`);
+        new Notice(`Live Preview: Failed to start server — ${String(err)}`);
         return;
       }
     }
@@ -105,7 +105,6 @@ export default class LivePreviewPlugin extends Plugin implements PreviewControll
       leaf = this.app.workspace.getRightLeaf(false) ?? this.app.workspace.getLeaf("split");
     }
     await leaf.setViewState({ type: VIEW_TYPE_LIVE_PREVIEW, active: true });
-    this.app.workspace.revealLeaf(leaf);
   }
 
   private onFileChanged(): void {
@@ -127,12 +126,12 @@ export default class LivePreviewPlugin extends Plugin implements PreviewControll
     }
   }
 
-  async onunload(): Promise<void> {
-    await this.stopPreview();
+  onunload(): void {
+    void this.stopPreview();
   }
 
   async loadSettings(): Promise<void> {
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData() as Partial<LivePreviewSettings>);
   }
 
   async saveSettings(): Promise<void> {

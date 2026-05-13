@@ -4003,13 +4003,10 @@ var PreviewView = class extends import_obsidian.FileView {
   async onOpen() {
     const container = this.contentEl;
     container.empty();
-    container.style.padding = "0";
-    container.style.overflow = "hidden";
-    this.iframe = document.createElement("iframe");
+    container.addClass("live-preview-container");
+    this.iframe = activeDocument.createElement("iframe");
     this.iframe.setAttribute("sandbox", "allow-scripts allow-same-origin");
-    this.iframe.style.width = "100%";
-    this.iframe.style.height = "100%";
-    this.iframe.style.border = "none";
+    this.iframe.addClass("live-preview-iframe");
     container.appendChild(this.iframe);
   }
   loadUrl(url) {
@@ -4078,26 +4075,26 @@ var LivePreviewPlugin = class extends import_obsidian3.Plugin {
       (leaf) => new PreviewView(leaf, this)
     );
     this.addCommand({
-      id: "start-live-preview",
-      name: "Start Live Preview",
+      id: "start",
+      name: "Start preview",
       checkCallback: (checking) => {
         const file = this.app.workspace.getActiveFile();
         if (file && (file.extension === "html" || file.extension === "htm")) {
           if (!checking)
-            this.openPreviewForFile(file);
+            void this.openPreviewForFile(file);
           return true;
         }
         return false;
       }
     });
     this.addCommand({
-      id: "stop-live-preview",
-      name: "Stop Live Preview",
+      id: "stop",
+      name: "Stop preview",
       callback: () => this.stopPreview()
     });
     this.addCommand({
       id: "open-in-browser",
-      name: "Open Preview in Browser",
+      name: "Open preview in browser",
       checkCallback: (checking) => {
         if (this.liveServer.isRunning && this.currentFile) {
           if (!checking) {
@@ -4139,7 +4136,7 @@ var LivePreviewPlugin = class extends import_obsidian3.Plugin {
       try {
         await this.liveServer.start(rootDir);
       } catch (err) {
-        new import_obsidian3.Notice(`Live Preview: Failed to start server \u2014 ${err}`);
+        new import_obsidian3.Notice(`Live Preview: Failed to start server \u2014 ${String(err)}`);
         return;
       }
     }
@@ -4154,7 +4151,6 @@ var LivePreviewPlugin = class extends import_obsidian3.Plugin {
       leaf = (_a = this.app.workspace.getRightLeaf(false)) != null ? _a : this.app.workspace.getLeaf("split");
     }
     await leaf.setViewState({ type: VIEW_TYPE_LIVE_PREVIEW, active: true });
-    this.app.workspace.revealLeaf(leaf);
   }
   onFileChanged() {
     if (!this.liveServer.isRunning)
@@ -4174,8 +4170,8 @@ var LivePreviewPlugin = class extends import_obsidian3.Plugin {
       this.debounceTimer = null;
     }
   }
-  async onunload() {
-    await this.stopPreview();
+  onunload() {
+    void this.stopPreview();
   }
   async loadSettings() {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
