@@ -23,8 +23,6 @@ export class SettingTab extends PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
 
-    containerEl.createEl("h2", { text: "Live Preview" });
-
     new Setting(containerEl)
       .setName("Port")
       .setDesc("Starting port (will auto-increment if busy)")

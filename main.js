@@ -3772,7 +3772,7 @@ function getReloadScript(port) {
   return `
 <script>
 (function() {
-  var socket = new WebSocket('ws://localhost:${port}/live-reload');
+  const socket = new WebSocket('ws://localhost:${port}/live-reload');
   socket.addEventListener('message', function(event) {
     if (event.data === 'reload') {
       location.reload();
@@ -4040,7 +4040,6 @@ var SettingTab = class extends import_obsidian2.PluginSettingTab {
   display() {
     const { containerEl } = this;
     containerEl.empty();
-    containerEl.createEl("h2", { text: "Live Preview" });
     new import_obsidian2.Setting(containerEl).setName("Port").setDesc("Starting port (will auto-increment if busy)").addText(
       (text) => text.setValue(String(this.plugin.settings.port)).onChange(async (value) => {
         const port = parseInt(value, 10);

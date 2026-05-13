@@ -1,5 +1,5 @@
 {
-  "name": "obsidian-live-preview",
+  "name": "live-preview",
   "version": "1.0.0",
   "description": "Live HTML preview with local HTTP server and auto-reload for Obsidian",
   "main": "main.js",
