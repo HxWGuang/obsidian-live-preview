@@ -21,8 +21,8 @@ Search "Live Preview" in **Settings → Community plugins → Browse**, then ins
 
 ### Manual
 
-1. Download the latest release from [Releases](https://github.com/HxWGuang/obsidian-live-preview/releases).
-2. Extract the files into `<vault>/.obsidian/plugins/obsidian-live-preview/`.
+1. Download `main.js`, `manifest.json`, and `styles.css` from the [latest release](https://github.com/HxWGuang/obsidian-live-preview/releases/latest).
+2. Place the files into `<vault>/.obsidian/plugins/live-preview/`.
 3. Reload Obsidian (`Cmd/Ctrl + R`).
 4. Go to **Settings → Community plugins → Installed plugins** and enable **Live Preview**.
 

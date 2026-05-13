@@ -21,8 +21,8 @@
 
 ### 手动安装
 
-1. 从 [Releases](https://github.com/HxWGuang/obsidian-live-preview/releases) 下载最新版本。
-2. 解压到 `<笔记仓库>/.obsidian/plugins/obsidian-live-preview/`。
+1. 从 [最新 Release](https://github.com/HxWGuang/obsidian-live-preview/releases/latest) 下载 `main.js`、`manifest.json`、`styles.css`。
+2. 放入 `<笔记仓库>/.obsidian/plugins/live-preview/`。
 3. 重新加载 Obsidian（`Cmd/Ctrl + R`）。
 4. 在 **设置 → 第三方插件 → 已安装插件** 中启用 **Live Preview**。
 
