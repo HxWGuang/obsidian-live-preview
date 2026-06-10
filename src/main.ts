@@ -89,7 +89,7 @@ export default class LivePreviewPlugin extends Plugin implements PreviewControll
       try {
         await this.liveServer.start(rootDir);
       } catch (err) {
-        new Notice(`Live Preview: Failed to start server — ${String(err)}`);
+        new Notice(`HTML Preview: Failed to start server — ${String(err)}`);
         return;
       }
     }

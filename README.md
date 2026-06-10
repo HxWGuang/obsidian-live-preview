@@ -1,4 +1,4 @@
-# Obsidian Live Preview
+# Obsidian HTML Preview
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
@@ -17,14 +17,14 @@ A live HTML preview plugin for [Obsidian](https://obsidian.md), inspired by VSCo
 
 ### Obsidian Community Plugins
 
-Search "Live Preview" in **Settings → Community plugins → Browse**, then install and enable.
+Search "HTML Preview" in **Settings → Community plugins → Browse**, then install and enable.
 
 ### Manual
 
 1. Download `main.js`, `manifest.json`, and `styles.css` from the [latest release](https://github.com/HxWGuang/obsidian-live-preview/releases/latest).
 2. Place the files into `<vault>/.obsidian/plugins/live-preview/`.
 3. Reload Obsidian (`Cmd/Ctrl + R`).
-4. Go to **Settings → Community plugins → Installed plugins** and enable **Live Preview**.
+4. Go to **Settings → Community plugins → Installed plugins** and enable **HTML Preview**.
 
 ### BRAT
 
@@ -37,8 +37,8 @@ Search "Live Preview" in **Settings → Community plugins → Browse**, then ins
 1. Open any `.html` or `.htm` file in your vault — the preview starts automatically in the right sidebar.
 2. Edit the file. The preview refreshes automatically.
 3. Use the command palette (`Cmd/Ctrl + P`):
-   - **Start Live Preview** — Manually start the preview for the active HTML file.
-   - **Stop Live Preview** — Shut down the local server.
+   - **Start HTML Preview** — Manually start the preview for the active HTML file.
+   - **Stop HTML Preview** — Shut down the local server.
    - **Open Preview in Browser** — Open the current preview page in your system browser.
 
 ## Settings

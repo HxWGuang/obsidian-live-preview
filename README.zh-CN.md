@@ -1,4 +1,4 @@
-# Obsidian Live Preview
+# Obsidian HTML Preview
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
@@ -17,14 +17,14 @@
 
 ### Obsidian 社区插件市场
 
-在 **设置 → 第三方插件 → 浏览** 中搜索 "Live Preview"，安装并启用。
+在 **设置 → 第三方插件 → 浏览** 中搜索 "HTML Preview"，安装并启用。
 
 ### 手动安装
 
 1. 从 [最新 Release](https://github.com/HxWGuang/obsidian-live-preview/releases/latest) 下载 `main.js`、`manifest.json`、`styles.css`。
 2. 放入 `<笔记仓库>/.obsidian/plugins/live-preview/`。
 3. 重新加载 Obsidian（`Cmd/Ctrl + R`）。
-4. 在 **设置 → 第三方插件 → 已安装插件** 中启用 **Live Preview**。
+4. 在 **设置 → 第三方插件 → 已安装插件** 中启用 **HTML Preview**。
 
 ### 通过 BRAT 安装
 
@@ -37,8 +37,8 @@
 1. 在文件列表中打开任意 `.html` 或 `.htm` 文件，预览自动在右侧面板启动。
 2. 编辑文件内容，预览自动刷新。
 3. 使用命令面板（`Cmd/Ctrl + P`）：
-   - **Start Live Preview** — 为当前 HTML 文件手动启动预览。
-   - **Stop Live Preview** — 关闭本地服务器。
+   - **Start HTML Preview** — 为当前 HTML 文件手动启动预览。
+   - **Stop HTML Preview** — 关闭本地服务器。
    - **Open Preview in Browser** — 在系统浏览器中打开当前预览页面。
 
 ## 设置

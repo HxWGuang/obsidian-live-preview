@@ -3989,7 +3989,7 @@ var PreviewView = class extends import_obsidian.FileView {
   }
   getDisplayText() {
     var _a, _b;
-    return (_b = (_a = this.file) == null ? void 0 : _a.name) != null ? _b : "Live Preview";
+    return (_b = (_a = this.file) == null ? void 0 : _a.name) != null ? _b : "HTML Preview";
   }
   getIcon() {
     return "globe";
@@ -4136,7 +4136,7 @@ var LivePreviewPlugin = class extends import_obsidian3.Plugin {
       try {
         await this.liveServer.start(rootDir);
       } catch (err) {
-        new import_obsidian3.Notice(`Live Preview: Failed to start server \u2014 ${String(err)}`);
+        new import_obsidian3.Notice(`HTML Preview: Failed to start server \u2014 ${String(err)}`);
         return;
       }
     }

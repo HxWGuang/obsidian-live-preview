@@ -20,7 +20,7 @@ export class PreviewView extends FileView {
   }
 
   getDisplayText(): string {
-    return this.file?.name ?? "Live Preview";
+    return this.file?.name ?? "HTML Preview";
   }
 
   getIcon(): string {
