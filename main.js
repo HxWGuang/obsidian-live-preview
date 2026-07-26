@@ -3982,6 +3982,9 @@ var PreviewView = class extends import_obsidian.FileView {
   constructor(leaf, controller) {
     super(leaf);
     this.iframe = null;
+    this.mode = "preview";
+    this.sourceEl = null;
+    this.toggleBtn = null;
     this.controller = controller;
   }
   getViewType() {
@@ -3999,6 +4002,9 @@ var PreviewView = class extends import_obsidian.FileView {
   }
   async onLoadFile(file) {
     await this.controller.onFileOpen(file, this);
+    if (this.mode === "source") {
+      await this.renderSource();
+    }
   }
   async onOpen() {
     const container = this.contentEl;
@@ -4008,6 +4014,41 @@ var PreviewView = class extends import_obsidian.FileView {
     this.iframe.setAttribute("sandbox", "allow-scripts allow-same-origin");
     this.iframe.addClass("live-preview-iframe");
     container.appendChild(this.iframe);
+    this.sourceEl = container.createEl("pre", { cls: "live-preview-source" });
+    this.sourceEl.hide();
+    this.toggleBtn = this.addAction("code", "View source", () => {
+      void this.toggleMode();
+    });
+    this.registerEvent(
+      this.app.vault.on("modify", (file) => {
+        if (file === this.file && this.mode === "source") {
+          void this.renderSource();
+        }
+      })
+    );
+  }
+  async toggleMode() {
+    this.mode = this.mode === "preview" ? "source" : "preview";
+    await this.applyMode();
+  }
+  async applyMode() {
+    var _a, _b;
+    const isSource = this.mode === "source";
+    if (isSource) {
+      await this.renderSource();
+    }
+    (_a = this.iframe) == null ? void 0 : _a.toggle(!isSource);
+    (_b = this.sourceEl) == null ? void 0 : _b.toggle(isSource);
+    if (this.toggleBtn) {
+      (0, import_obsidian.setIcon)(this.toggleBtn, isSource ? "eye" : "code");
+      this.toggleBtn.setAttribute("aria-label", isSource ? "View preview" : "View source");
+    }
+  }
+  async renderSource() {
+    if (!this.file || !this.sourceEl)
+      return;
+    const content = await this.app.vault.read(this.file);
+    this.sourceEl.setText(content);
   }
   loadUrl(url) {
     if (this.iframe) {

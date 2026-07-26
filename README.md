@@ -9,6 +9,7 @@ A live HTML preview plugin for [Obsidian](https://obsidian.md), inspired by VSCo
 - **Local HTTP Server** — Serves `.html` files from their parent directory, so relative paths, CSS, JS, fonts, and images all work correctly.
 - **Auto-Reload on Change** — Uses WebSocket to push reload signals to the browser. Edit your HTML (or linked CSS/JS), and the preview refreshes automatically within ~300ms.
 - **Embedded Preview Panel** — A dedicated Obsidian pane (right sidebar or any split) renders your HTML in an iframe pointed at the local server.
+- **Source / Preview Toggle** — Switch between the rendered preview and the raw HTML source with one click via the view header button. The source view stays in sync as you edit.
 - **Open in Browser** — One command to open the current preview in your system's default browser.
 - **Path Traversal Protection** — The server only serves files within the chosen directory. Requests attempting directory escape are rejected.
 - **Port Auto-Increment** — If the configured port is busy, the server automatically tries the next available port.
@@ -40,6 +41,7 @@ Search "HTML Preview" in **Settings → Community plugins → Browse**, then ins
    - **Start HTML Preview** — Manually start the preview for the active HTML file.
    - **Stop HTML Preview** — Shut down the local server.
    - **Open Preview in Browser** — Open the current preview page in your system browser.
+4. Click the `code` / `eye` icon in the preview pane's header to toggle between the rendered preview and the HTML source.
 
 ## Settings
 
@@ -78,7 +80,7 @@ cp main.js manifest.json styles.css /path/to/vault/.obsidian/plugins/obsidian-li
 - **Bundler**: esbuild
 - **WebSocket**: ws
 - **Platform**: Obsidian Plugin API, Node.js http module
-- **Minimum Obsidian Version**: 0.15.0
+- **Minimum Obsidian Version**: 1.1.0
 - **Desktop Only** (uses Node.js built-in modules for the HTTP server)
 
 ## License

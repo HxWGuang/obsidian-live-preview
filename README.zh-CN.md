@@ -9,6 +9,7 @@
 - **本地 HTTP 服务器** — 以 HTML 文件所在目录为根目录启动静态服务，CSS、JS、字体、图片等相对路径资源全部正常加载。
 - **自动刷新** — 通过 WebSocket 推送重载信号。编辑 HTML 或关联的 CSS/JS 文件后，预览约 300ms 内自动刷新。
 - **内嵌预览面板** — 在 Obsidian 右侧边栏（或任意分屏位置）以 iframe 形式展示实时预览。
+- **源码 / 预览切换** — 通过预览面板标题栏的图标按钮，一键在渲染预览与 HTML 源码间切换；源码模式随编辑自动同步。
 - **外部浏览器打开** — 一键将当前预览页面在系统默认浏览器中打开。
 - **路径遍历防护** — 服务器仅提供指定目录树内的文件，拒绝目录穿越攻击。
 - **端口自动递增** — 若配置的端口被占用，自动尝试下一可用端口。
@@ -40,6 +41,7 @@
    - **Start HTML Preview** — 为当前 HTML 文件手动启动预览。
    - **Stop HTML Preview** — 关闭本地服务器。
    - **Open Preview in Browser** — 在系统浏览器中打开当前预览页面。
+4. 点击预览面板标题栏的 `code` / `eye` 图标，在渲染预览与 HTML 源码间随时切换。
 
 ## 设置
 
@@ -78,7 +80,7 @@ cp main.js manifest.json styles.css /path/to/vault/.obsidian/plugins/obsidian-li
 - **打包工具**：esbuild
 - **WebSocket**：ws
 - **平台**：Obsidian Plugin API、Node.js http 模块
-- **最低 Obsidian 版本**：0.15.0
+- **最低 Obsidian 版本**：1.1.0
 - **仅支持桌面端**（使用了 Node.js 内置模块启动 HTTP 服务器）
 
 ## 许可证
